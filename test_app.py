@@ -4,7 +4,7 @@ import json
 import random
 from flask_sqlalchemy import flask_sqlalchemy
 from app import create_app
-from models import setup_db, App_User
+from database.models import setup_db, App_User
 
 
 class SpsmsTestCases(unittest.TestCase):

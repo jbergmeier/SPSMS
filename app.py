@@ -5,8 +5,8 @@ from sqlalchemy.sql import exists
 from flask_migrate import Migrate, MigrateCommand
 import logging
 import os
-from models import setup_db, App_User
-from auth import AuthError
+from database.models import setup_db, App_User
+from auth.auth import AuthError
 
 
 def create_app(test_config=None):
