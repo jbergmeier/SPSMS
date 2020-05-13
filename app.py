@@ -18,38 +18,49 @@ def create_app(test_config=None):
     @app.route('/createUser', methods=['POST'])
     def create_user():
         req = request.get_json()
-        req_email = req.get('email')
-        req_firstname = req.get('firstname')
-        req_lastname = req.get('lastname')
-        req_company = req.get('company')
-        req_address = req.get('address')
-        req_postalcode = req.get('postalcode')
-        req_postalplace = req.get('postalplace')
-        req_country = req.get('country')
+        try:
+            req_email = req.get('email')
+            req_firstname = req.get('firstname')
+            req_lastname = req.get('lastname')
+            req_company = req.get('company')
+            req_address = req.get('address')
+            req_postalcode = req.get('postalcode')
+            req_postalplace = req.get('postalplace')
+            req_country = req.get('country')
 
-        new_user = App_User(firstname=req_firstname, lastname=req_lastname, email=req_email, company=req_company, address=req_address,
-                            postalcode=req_postalcode, postalplace=req_postalplace, country=req_country)
-        print(new_user)
-        new_user.insert()
+            new_user = App_User(firstname=req_firstname, lastname=req_lastname, email=req_email, company=req_company, address=req_address,
+                                postalcode=req_postalcode, postalplace=req_postalplace, country=req_country)
+            print(new_user)
+            new_user.insert()
 
-        return jsonify({
-            "success": True,
-            "App_User": {
-                "firstname": req_firstname,
-                "lastname": req_lastname,
-                "email": req_email
-            }
-        })
+            return jsonify({
+                "success": True,
+                "App_User": {
+                    "firstname": req_firstname,
+                    "lastname": req_lastname,
+                    "email": req_email
+                }
+            })
+        except:
+            abort(422)
 
     @app.route('/users', methods=['GET'])
     def get_users():
         all_users = App_User.query.all()
-        users = [user.short() for user in all_users]
+        if not all_users:
+            return jsonify({
+                "success": True,
+                "message": "No users are setup in the DB"
+            })
+        try:
+            users = [user.short() for user in all_users]
 
-        return jsonify({
-            "success": True,
-            "users": users
-        })
+            return jsonify({
+                "success": True,
+                "users": users
+            })
+        except:
+            abort(422)
 
     @app.route('/users/<int:id>', methods=['GET'])
     def get_single_user(id):
