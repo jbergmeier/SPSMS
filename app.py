@@ -5,6 +5,7 @@ from sqlalchemy.sql import exists
 from flask_migrate import Migrate, MigrateCommand
 import logging
 import os
+import datetime
 from database.models import setup_db, App_User
 from auth.auth import AuthError
 
@@ -15,6 +16,11 @@ def create_app(test_config=None):
     setup_db(app)
     CORS(app)
 
+    '''
+    ###################################################
+    user endpoints
+    ###################################################
+    '''
     @app.route('/createUser', methods=['POST'])
     def create_user():
         req = request.get_json()
@@ -76,6 +82,54 @@ def create_app(test_config=None):
         except:
             abort(422)
 
+    @app.route('/users/<int:id>', methods=['PATCH'])
+    def patch_user(id):
+        single_user = App_User.query.filter(App_User.id == id).first()
+        if not single_user:
+            abort(404)
+
+        req = request.get_json()
+
+        try:
+            if 'firstname' in req:
+                single_user.firstname = req.get('firstname')
+
+            if 'lastname' in req:
+                single_user.lastname = req.get('lastname')
+
+            if 'email' in req:
+                single_user.email = req.get('email')
+
+            if 'company' in req:
+                single_user.company = req.get('company')
+
+            if 'address' in req:
+                single_user.address = req.get('address')
+
+            if 'postalcode' in req:
+                single_user.postalcode = req.get('postalcode')
+
+            if 'postalplace' in req:
+                single_user.postalplace = req.get('postalplace')
+
+            if 'country' in req:
+                single_user.country = req.get('country')
+
+            single_user.updated_at = datetime.datetime.now()
+
+            single_user.update()
+
+            changed_user = [changed_user.long() for changed_user in App_User.query.filter(
+                App_User.id == id).all()]
+
+            return jsonify({
+                "success": True,
+                "User": changed_user
+            })
+
+        except:
+            abort(422)
+
     @app.route('/users/<int:id>', methods=['DELETE'])
     def delete_user(id):
         single_user = App_User.query.filter(App_User.id == id).all()
@@ -94,7 +148,9 @@ def create_app(test_config=None):
             abort(422)
 
     '''
+    ###################################################
     Errorhandler for different Cases
+    ###################################################
     '''
     @app.errorhandler(400)
     def bad_request(error):
