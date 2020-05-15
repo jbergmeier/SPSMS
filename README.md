@@ -1,8 +1,8 @@
 # SPSMS
 Special Publication Sales Management System offeres the possibility to sell ads in special publications of a newspaper
 
-### Endpoints Backend
-#### POST /createUser
+## Endpoints Backend
+### POST /createUser
 __Description:__ 
 EP can be used to create new Users (e.g. internal User + Customers) in the Database.
 
@@ -31,7 +31,7 @@ None
 __Sample Result:__ 
 tbd
 
-#### GET /users
+### GET /users
 __Description:__ 
 EP to get all users in the Database
 

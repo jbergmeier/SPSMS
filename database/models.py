@@ -87,3 +87,37 @@ class App_User(db.Model):
 
     def __repr__(self):
         return json.dumps(self.short())
+
+
+'''
+Groups for Users of the Database incl. Customers
+'''
+
+
+class App_Group(db.Model):
+    __tablename__ = 'app_group'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+
+'''
+N-M Table for User/Group
+'''
+app_user_group = db.Table('app_user_group',
+                          db.Column('app_user_id', db.Integer,
+                                    db.ForeignKey('app_user.id')),
+                          db.Column('app_group_id', db.Integer,
+                                    db.ForeignKey('app_group.id'))
+                          )

@@ -76,6 +76,23 @@ def create_app(test_config=None):
         except:
             abort(422)
 
+    @app.route('/users/<int:id>', methods=['DELETE'])
+    def delete_user(id):
+        single_user = App_User.query.filter(App_User.id == id).all()
+        if not single_user:
+            abort(404)
+        try:
+            delete_user = App_User.query.filter(App_User.id == id).first()
+            delete_user.delete()
+
+            return jsonify({
+                "success": True,
+                "deleted User id": delete_user.id
+            })
+
+        except:
+            abort(422)
+
     '''
     Errorhandler for different Cases
     '''
