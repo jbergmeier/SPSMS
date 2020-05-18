@@ -9,6 +9,7 @@ import datetime
 from database.models import setup_db, App_User
 from auth.auth import AuthError
 from endpoints.users import users
+from endpoints.groups import groups
 
 
 def create_app(test_config=None):
@@ -23,6 +24,13 @@ def create_app(test_config=None):
     ###################################################
     '''
     app.register_blueprint(users, url_prefix='/users')
+
+    '''
+    ###################################################
+    groups endpoints
+    ###################################################
+    '''
+    app.register_blueprint(groups, url_prefix='/groups')
 
     '''
     ###################################################
