@@ -28,6 +28,21 @@ Users of the Database incl. Customers
 '''
 
 
+'''
+N-M Table for User/Group
+'''
+app_user_group = db.Table('app_user_group',
+                          db.Column('app_user_id', db.Integer,
+                                    db.ForeignKey('app_user.id')),
+                          db.Column('app_group_id', db.Integer,
+                                    db.ForeignKey('app_group.id'))
+                          )
+
+'''
+Create User
+'''
+
+
 class App_User(db.Model):
     __tablename__ = 'app_user'
 
@@ -99,6 +114,8 @@ class App_Group(db.Model):
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
+    app_user = db.relationship("App_User",
+                               secondary=app_user_group, backref=db.backref('groups'), lazy=True)
 
     def insert(self):
         db.session.add(self)
@@ -111,13 +128,11 @@ class App_Group(db.Model):
         db.session.delete(self)
         db.session.commit()
 
+    def short(self):
+        return {
+            'id': self.id,
+            'name': self.name
+        }
 
-'''
-N-M Table for User/Group
-'''
-app_user_group = db.Table('app_user_group',
-                          db.Column('app_user_id', db.Integer,
-                                    db.ForeignKey('app_user.id')),
-                          db.Column('app_group_id', db.Integer,
-                                    db.ForeignKey('app_group.id'))
-                          )
+    def __repr__(self):
+        return json.dumps(self.short())

@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, abort, jsonify
-from database.models import setup_db, App_User
+from flask import Blueprint, render_template, abort, jsonify, request
+from database.models import setup_db, App_User, App_Group, app_user_group, db
 
 users = Blueprint("users", __name__)
 
@@ -139,3 +139,58 @@ def delete_user(id):
 
     except:
         abort(422)
+
+
+'''
+###################################################
+user group endpoints
+###################################################
+'''
+
+
+@users.route('/<int:id>/groups', methods=['GET'])
+def show_user_groups(id):
+    user = App_User.query.filter(App_User.id == id).first()
+    if not user:
+        abort(404)
+
+    groups = App_Group.query.filter(
+        App_Group.app_user.any(App_User.id == id)).all()
+    user_groups = [group.short() for group in groups]
+    try:
+        return jsonify({
+            "success": True,
+            "groups": user_groups
+        })
+
+    except:
+        abort(422)
+
+
+@users.route('/<int:id>/groups', methods=['POST'])
+def add_user_to_group(id):
+    req = request.get_json()
+    # get group ID and check if it exists in DB
+    req_group_id = req.get('id_group')
+    group = App_Group.query.filter(App_Group.id == req_group_id).first()
+    if not group:
+        abort(404)
+    # Get user and check if it exists
+    user = App_User.query.filter(App_User.id == id).first()
+    if not user:
+        abort(404)
+    try:
+        user.groups.append(group)
+        db.session.commit()
+        return jsonify({
+            "success": True,
+            "message": "user has been successfully added to group"
+
+        })
+    except:
+        abort(422)
+
+
+@users.route('/<int:id>/groups/<int:group_id>', methods=['DELETE'])
+def delete_user_group(id, group_id):
+    pass
