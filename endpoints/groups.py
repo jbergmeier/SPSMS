@@ -28,7 +28,7 @@ def get_groups():
         abort(422)
 
 
-@groups.route('/createGroup', methods=['POST'])
+@groups.route('/', methods=['POST'])
 def create_group():
     req = request.get_json()
     try:

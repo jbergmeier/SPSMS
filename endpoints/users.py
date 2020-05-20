@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, abort, jsonify, request
 from database.models import setup_db, App_User, App_Group, app_user_group, db
+from auth.auth import AuthError, requires_auth
 
 users = Blueprint("users", __name__)
 
@@ -10,8 +11,9 @@ user endpoints
 '''
 
 
-@users.route('/createUser', methods=['POST'])
-def create_user():
+@users.route('/', methods=['POST'])
+@requires_auth(permission='post:user')
+def create_user(payload):
     req = request.get_json()
     try:
         req_email = req.get('email')
