@@ -43,6 +43,7 @@ def create_user(payload):
 
 
 @users.route('/', methods=['GET'])
+@requires_auth(permission='get:user')
 def get_users():
     all_users = App_User.query.all()
     if not all_users:
@@ -62,6 +63,7 @@ def get_users():
 
 
 @users.route('/<int:id>', methods=['GET'])
+@requires_auth(permission='get:user')
 def get_single_user(id):
     single_user = App_User.query.filter(App_User.id == id).all()
     if not single_user:
@@ -77,6 +79,7 @@ def get_single_user(id):
 
 
 @users.route('/<int:id>', methods=['PATCH'])
+@requires_auth(permission='post:user')
 def patch_user(id):
     single_user = App_User.query.filter(App_User.id == id).first()
     if not single_user:
@@ -126,6 +129,7 @@ def patch_user(id):
 
 
 @users.route('/<int:id>', methods=['DELETE'])
+@requires_auth(permission='post:user')
 def delete_user(id):
     single_user = App_User.query.filter(App_User.id == id).all()
     if not single_user:
@@ -151,6 +155,7 @@ user group endpoints
 
 
 @users.route('/<int:id>/groups', methods=['GET'])
+@requires_auth(permission='get:group')
 def show_user_groups(id):
     user = App_User.query.filter(App_User.id == id).first()
     if not user:
@@ -170,6 +175,7 @@ def show_user_groups(id):
 
 
 @users.route('/<int:id>/groups', methods=['POST'])
+@requires_auth(permission='post:group')
 def add_user_to_group(id):
     req = request.get_json()
     # get group ID and check if it exists in DB
@@ -194,5 +200,6 @@ def add_user_to_group(id):
 
 
 @users.route('/<int:id>/groups/<int:group_id>', methods=['DELETE'])
+@requires_auth(permission='post:group')
 def delete_user_group(id, group_id):
     pass

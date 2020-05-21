@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, abort, jsonify, request
 from database.models import setup_db, App_User, App_Group
+from auth.auth import AuthError, requires_auth
 
 groups = Blueprint("groups", __name__)
 
@@ -11,6 +12,7 @@ groups endpoints
 
 
 @groups.route('/', methods=['GET'])
+@requires_auth(permission='get:group')
 def get_groups():
     all_groups = App_Group.query.all()
     if not all_groups:
@@ -29,6 +31,7 @@ def get_groups():
 
 
 @groups.route('/', methods=['POST'])
+@requires_auth(permission='post:group')
 def create_group():
     req = request.get_json()
     try:
@@ -45,6 +48,7 @@ def create_group():
 
 
 @groups.route('/<int:id>', methods=['DELETE'])
+@requires_auth(permission='post:group')
 def delete_group(id):
     group = App_Group.query.filter(App_Group.id == id).first()
     if not group:
@@ -60,5 +64,6 @@ def delete_group(id):
 
 
 @groups.route('/<int:id>/users', methods=['GET'])
+@requires_auth(permission='get:group')
 def get_users_in_group(id):
     pass

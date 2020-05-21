@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template, abort, jsonify, request
 from database.models import setup_db, Ad_Category
+from auth.auth import AuthError, requires_auth
+
 
 categories = Blueprint("categories", __name__)
 
