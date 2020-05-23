@@ -23,7 +23,7 @@ def create_app(test_config=None):
     @app.route('/')
     def default_route():
         print(request.get_data())
-        return "Hello"
+        return "<h1>Welcome to SPSMS Backend</h1>"
 
     '''
     ###################################################
@@ -48,7 +48,7 @@ def create_app(test_config=None):
 
     '''
     ###################################################
-    area endpoints
+    area endpoints incl. fixed prices
     ###################################################
     '''
     app.register_blueprint(areas, url_prefix='/areas')

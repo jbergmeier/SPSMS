@@ -49,7 +49,7 @@ def create_group(payload):
 
 @groups.route('/<int:id>', methods=['DELETE'])
 @requires_auth(permission='post:group')
-def delete_group(id, payload):
+def delete_group(payload, id):
     group = App_Group.query.filter(App_Group.id == id).first()
     if not group:
         abort(404)
@@ -65,5 +65,14 @@ def delete_group(id, payload):
 
 @groups.route('/<int:id>/users', methods=['GET'])
 @requires_auth(permission='get:group')
-def get_users_in_group(id, payload):
-    pass
+def get_users_in_group(payload, id):
+    users_per_group = App_Group.query.filter(App_Group.id == id).all()
+    if not users_per_group:
+        abort(404)
+    try:
+        return jsonify({
+            "success": True,
+            # "users": users_per_group.short()
+        })
+    except:
+        abort(422)

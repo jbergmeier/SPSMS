@@ -60,7 +60,7 @@ def get_users(payload):
 
 @users.route('/<int:id>', methods=['GET'])
 @requires_auth(permission='get:user')
-def get_single_user(id, payload):
+def get_single_user(payload, id):
     single_user = App_User.query.filter(App_User.id == id).all()
     if not single_user:
         abort(404)
@@ -76,7 +76,7 @@ def get_single_user(id, payload):
 
 @users.route('/<int:id>', methods=['PATCH'])
 @requires_auth(permission='post:user')
-def patch_user(id, payload):
+def patch_user(payload, id):
     single_user = App_User.query.filter(App_User.id == id).first()
     if not single_user:
         abort(404)
@@ -126,7 +126,7 @@ def patch_user(id, payload):
 
 @users.route('/<int:id>', methods=['DELETE'])
 @requires_auth(permission='post:user')
-def delete_user(id, payload):
+def delete_user(payload, id):
     single_user = App_User.query.filter(App_User.id == id).all()
     if not single_user:
         abort(404)
@@ -152,7 +152,7 @@ user group endpoints
 
 @users.route('/<int:id>/groups', methods=['GET'])
 @requires_auth(permission='get:group')
-def show_user_groups(id, payload):
+def show_user_groups(payload, id):
     user = App_User.query.filter(App_User.id == id).first()
     if not user:
         abort(404)
@@ -170,19 +170,25 @@ def show_user_groups(id, payload):
         abort(422)
 
 
-@users.route('/<int:id>/groups', methods=['POST'])
-@requires_auth(permission='post:group')
-def add_user_to_group(id, payload):
-    req = request.get_json()
-    # get group ID and check if it exists in DB
-    req_group_id = req.get('id_group')
-    group = App_Group.query.filter(App_Group.id == req_group_id).first()
+@users.route('/<int:id>/groups/<int:group_id>', methods=['POST'])
+@requires_auth(permission='post:user')
+def add_user_to_group(payload, id, group_id):
+    group = App_Group.query.filter(App_Group.id == group_id).first()
     if not group:
         abort(404)
     # Get user and check if it exists
     user = App_User.query.filter(App_User.id == id).first()
     if not user:
         abort(404)
+    # user_group = App_Group.query.filter(
+    #     App_Group.app_user.any(App_User.id == id).filter(App_Group.app_user.any(App_Group.id == group_id))).all()
+
+    # if user_group:
+    #     return jsonify({
+    #         "success": False,
+    #         "message": "User is already member of this group"
+    #     })
+
     try:
         user.groups.append(group)
         db.session.commit()
@@ -197,5 +203,5 @@ def add_user_to_group(id, payload):
 
 @users.route('/<int:id>/groups/<int:group_id>', methods=['DELETE'])
 @requires_auth(permission='post:group')
-def delete_user_group(id, group_id, payload):
+def delete_user_group(payload, id, group_id):
     pass

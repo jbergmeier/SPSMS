@@ -13,7 +13,8 @@ category endpoints
 
 
 @categories.route('/', methods=['GET'])
-def show_categories():
+@requires_auth(permission='get:category')
+def show_categories(payload):
     all_categories = Ad_Category.query.all()
     if not all_categories:
         return jsonify({
@@ -32,7 +33,8 @@ def show_categories():
 
 
 @categories.route('/<int:id>', methods=['GET'])
-def get_single_category(id):
+@requires_auth(permission='get:category')
+def get_single_category(payload, id):
     single_category = Ad_Category.query.filter(Ad_Category.id == id).first()
     if not single_category:
         abort(404)
@@ -46,7 +48,8 @@ def get_single_category(id):
 
 
 @categories.route('/', methods=['POST'])
-def create_category():
+@requires_auth(permission='post:category')
+def create_category(payload):
     req = request.get_json()
     if not req.get('code'):
         abort(400)
@@ -81,7 +84,8 @@ def create_category():
 
 
 @categories.route('/<int:id>', methods=['PATCH'])
-def patch_category(id):
+@requires_auth(permission='post:category')
+def patch_category(payload, id):
     single_category = Ad_Category.query.filter(Ad_Category.id == id).first()
     if not single_category:
         abort(404)
@@ -122,7 +126,8 @@ def patch_category(id):
 
 
 @categories.route('/<int:id>', methods=['DELETE'])
-def delete_category(id):
+@requires_auth(permission='post:category')
+def delete_category(payload, id):
     single_category = Ad_Category.query.filter(Ad_Category.id == id).first()
     if not single_category:
         abort(404)

@@ -12,7 +12,8 @@ areas endpoints
 
 
 @areas.route('/', methods=['GET'])
-def show_areas():
+@requires_auth(permission='get:area')
+def show_areas(palyoad):
     all_areas = Ad_Area.query.all()
     if not all_areas:
         return jsonify({
@@ -31,7 +32,8 @@ def show_areas():
 
 
 @areas.route('/<int:id>', methods=['GET'])
-def get_single_area(id):
+@requires_auth(permission='get:area')
+def get_single_area(payload, id):
     single_area = Ad_Area.query.filter(Ad_Area.id == id).first()
     if not single_area:
         abort(404)
@@ -45,7 +47,8 @@ def get_single_area(id):
 
 
 @areas.route('/', methods=['POST'])
-def create_area():
+@requires_auth(permission='post:area')
+def create_area(payload):
     req = request.get_json()
     if not req.get('code'):
         abort(400)
@@ -80,7 +83,8 @@ def create_area():
 
 
 @areas.route('/<int:id>', methods=['PATCH'])
-def patch_area(id):
+@requires_auth(permission='post:area')
+def patch_area(payload, id):
     single_area = Ad_Area.query.filter(Ad_Area.id == id).first()
     if not single_area:
         abort(404)
@@ -119,7 +123,8 @@ def patch_area(id):
 
 
 @areas.route('/<int:id>', methods=['DELETE'])
-def delete_area(id):
+@requires_auth(permission='post:area')
+def delete_area(payload, id):
     single_area = Ad_Area.query.filter(Ad_Area.id == id).first()
     if not single_area:
         abort(404)
@@ -145,7 +150,8 @@ fixedprices endpoints
 
 
 @areas.route('/<int:id>/fixedPrices', methods=['GET'])
-def show_fixedPrices_for_area(id):
+@requires_auth(permission='get:area')
+def show_fixedPrices_for_area(payload, id):
     single_area = Ad_Area.query.filter(Ad_Area.id == id).first()
     if not single_area:
         abort(404)
@@ -172,7 +178,8 @@ def show_fixedPrices_for_area(id):
 
 
 @areas.route('/<int:id>/fixedPrices/<int:id_fixedPrice>', methods=['GET'])
-def get_single_fixedPrice_for_area(id, id_fixedPrice):
+@requires_auth(permission='get:area')
+def get_single_fixedPrice_for_area(payload, id, id_fixedPrice):
     single_fixed_price_for_area = Ad_Fixed_Price.query.filter(
         Ad_Fixed_Price.id == id_fixedPrice).filter(Ad_Fixed_Price.id_ad_area == id).first()
     if not single_fixed_price_for_area:
@@ -188,7 +195,8 @@ def get_single_fixedPrice_for_area(id, id_fixedPrice):
 
 
 @areas.route('/<int:id>/fixedPrices/<int:id_fixedPrice>', methods=['PATCH'])
-def patch_fixed_price_for_area(id, id_fixedPrice):
+@requires_auth(permission='post:area')
+def patch_fixed_price_for_area(payload, id, id_fixedPrice):
     single_fixed_price_for_area = Ad_Fixed_Price.query.filter(
         Ad_Fixed_Price.id == id_fixedPrice).filter(Ad_Fixed_Price.id_ad_area == id).first()
     if not single_fixed_price_for_area:
@@ -221,7 +229,8 @@ def patch_fixed_price_for_area(id, id_fixedPrice):
 
 
 @areas.route('/<int:id>/fixedPrices', methods=['POST'])
-def create_fixedPrice_for_area(id):
+@requires_auth(permission='post:area')
+def create_fixedPrice_for_area(payload, id):
     single_area = Ad_Area.query.filter(Ad_Area.id == id).first()
     if not single_area:
         abort(404)
@@ -249,7 +258,8 @@ def create_fixedPrice_for_area(id):
 
 
 @areas.route('/<int:id>/fixedPrices/<int:id_fixedPrice>', methods=['DELETE'])
-def delete_fixed_price_for_area(id, id_fixedPrice):
+@requires_auth(permission='post:area')
+def delete_fixed_price_for_area(payload, id, id_fixedPrice):
     single_fixed_price_for_area = Ad_Fixed_Price.query.filter(
         Ad_Fixed_Price.id == id_fixedPrice).filter(Ad_Fixed_Price.id_ad_area == id).first()
     if not single_fixed_price_for_area:
@@ -277,7 +287,8 @@ category_area endpoints
 
 
 @areas.route('/<int:id>/categories', methods=['GET'])
-def show_category_for_area(id):
+@requires_auth(permission='get:area')
+def show_category_for_area(payload, id):
     single_area = Ad_Area.query.filter(Ad_Area.id == id).first()
     if not single_area:
         abort(404)

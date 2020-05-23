@@ -2,11 +2,21 @@
 Special Publication Sales Management System offeres the possibility to sell ads in special publications of a newspaper
 
 ## Authorization
+Login and get token:
 https://webcoffee.eu.auth0.com/authorize?audience=SPSMS-API-DEV&response_type=token&client_id=16zBUXWV3bO9qdlQjRiKEgtDRm0KFgyp&redirect_uri=https://localhost:5000
 
-### Users and Roles
+### Sample Test Users and Roles
 __Admin Role:__
-spsms-admin@webcoffee.io
+Username: spsms-admin@webcoffee.io
+Password: admin001!
+
+__Manager Role:__
+Username: spsms-manger@webcoffee.io
+Password: manager001!
+
+__Sales Role:__
+Username: spsms-sales@webcoffee.io
+Password: sales001!
 
 ## Endpoints Backend
 ### POST /createUser
@@ -16,7 +26,7 @@ EP can be used to create new Users (e.g. internal User + Customers) in the Datab
 __Request Arguments:__ 
 None
 
-__Required Header Arguments:__ 
+__Required Header Arguments:__
 tbd
 
 __Sample Body:__ 
