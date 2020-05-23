@@ -13,7 +13,7 @@ groups endpoints
 
 @groups.route('/', methods=['GET'])
 @requires_auth(permission='get:group')
-def get_groups():
+def get_groups(payload):
     all_groups = App_Group.query.all()
     if not all_groups:
         return jsonify({
@@ -32,7 +32,7 @@ def get_groups():
 
 @groups.route('/', methods=['POST'])
 @requires_auth(permission='post:group')
-def create_group():
+def create_group(payload):
     req = request.get_json()
     try:
         req_name = req.get('name')
@@ -49,7 +49,7 @@ def create_group():
 
 @groups.route('/<int:id>', methods=['DELETE'])
 @requires_auth(permission='post:group')
-def delete_group(id):
+def delete_group(id, payload):
     group = App_Group.query.filter(App_Group.id == id).first()
     if not group:
         abort(404)
@@ -65,5 +65,5 @@ def delete_group(id):
 
 @groups.route('/<int:id>/users', methods=['GET'])
 @requires_auth(permission='get:group')
-def get_users_in_group(id):
+def get_users_in_group(id, payload):
     pass

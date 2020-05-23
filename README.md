@@ -1,6 +1,13 @@
 # SPSMS
 Special Publication Sales Management System offeres the possibility to sell ads in special publications of a newspaper
 
+## Authorization
+https://webcoffee.eu.auth0.com/authorize?audience=SPSMS-API-DEV&response_type=token&client_id=16zBUXWV3bO9qdlQjRiKEgtDRm0KFgyp&redirect_uri=https://localhost:5000
+
+### Users and Roles
+__Admin Role:__
+spsms-admin@webcoffee.io
+
 ## Endpoints Backend
 ### POST /createUser
 __Description:__ 

@@ -32,11 +32,7 @@ def create_user(payload):
 
         return jsonify({
             "success": True,
-            "App_User": {
-                "firstname": req_firstname,
-                "lastname": req_lastname,
-                "email": req_email
-            }
+            "App_User": new_user.short()
         })
     except:
         abort(422)
@@ -44,7 +40,7 @@ def create_user(payload):
 
 @users.route('/', methods=['GET'])
 @requires_auth(permission='get:user')
-def get_users():
+def get_users(payload):
     all_users = App_User.query.all()
     if not all_users:
         return jsonify({
@@ -64,7 +60,7 @@ def get_users():
 
 @users.route('/<int:id>', methods=['GET'])
 @requires_auth(permission='get:user')
-def get_single_user(id):
+def get_single_user(id, payload):
     single_user = App_User.query.filter(App_User.id == id).all()
     if not single_user:
         abort(404)
@@ -80,7 +76,7 @@ def get_single_user(id):
 
 @users.route('/<int:id>', methods=['PATCH'])
 @requires_auth(permission='post:user')
-def patch_user(id):
+def patch_user(id, payload):
     single_user = App_User.query.filter(App_User.id == id).first()
     if not single_user:
         abort(404)
@@ -130,7 +126,7 @@ def patch_user(id):
 
 @users.route('/<int:id>', methods=['DELETE'])
 @requires_auth(permission='post:user')
-def delete_user(id):
+def delete_user(id, payload):
     single_user = App_User.query.filter(App_User.id == id).all()
     if not single_user:
         abort(404)
@@ -156,7 +152,7 @@ user group endpoints
 
 @users.route('/<int:id>/groups', methods=['GET'])
 @requires_auth(permission='get:group')
-def show_user_groups(id):
+def show_user_groups(id, payload):
     user = App_User.query.filter(App_User.id == id).first()
     if not user:
         abort(404)
@@ -176,7 +172,7 @@ def show_user_groups(id):
 
 @users.route('/<int:id>/groups', methods=['POST'])
 @requires_auth(permission='post:group')
-def add_user_to_group(id):
+def add_user_to_group(id, payload):
     req = request.get_json()
     # get group ID and check if it exists in DB
     req_group_id = req.get('id_group')
@@ -201,5 +197,5 @@ def add_user_to_group(id):
 
 @users.route('/<int:id>/groups/<int:group_id>', methods=['DELETE'])
 @requires_auth(permission='post:group')
-def delete_user_group(id, group_id):
+def delete_user_group(id, group_id, payload):
     pass
