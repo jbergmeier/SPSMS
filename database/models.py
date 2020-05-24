@@ -274,3 +274,34 @@ class Ad_Category_Area(db.Model):
     activated = Column(Boolean, nullable=False, default=0)
     id_category = Column(Integer, ForeignKey('ad_category.id'), nullable=False)
     id_area = Column(Integer, ForeignKey('ad_area.id'), nullable=False)
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def short(self):
+        return {
+            'id': self.id,
+            'id_area': self.id_area,
+            'id_category': self.id_category
+        }
+
+    def long(self):
+        return {
+            'id': self.id,
+            'id_area': self.id_area,
+            'id_category': self.id_category,
+            'valid_from': self.valid_from,
+            'valid_to': self.valid_to,
+            'activated': self.activated
+        }
+
+    def __repr__(self):
+        return json.dumps(self.short())

@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, abort, jsonify, request
-from database.models import setup_db, Ad_Area, Ad_Category_Area  # , Ad_Fixed_Price
+# , Ad_Fixed_Price
+from database.models import setup_db, Ad_Area, Ad_Category_Area, Ad_Category
 from auth.auth import AuthError, requires_auth
+import datetime
 
 areas = Blueprint("areas", __name__)
 
@@ -288,125 +290,174 @@ category_area endpoints
 
 @areas.route('/<int:id>/categories', methods=['GET'])
 @requires_auth(permission='get:area')
-def show_category_for_area(payload, id):
+def show_user_groups(payload, id):
     single_area = Ad_Area.query.filter(Ad_Area.id == id).first()
     if not single_area:
         abort(404)
 
-    all_fixed_Prices_for_area = Ad_Fixed_Price.query.filter(
-        Ad_Fixed_Price.id_ad_area == id).all()
-    if not all_fixed_Prices_for_area:
+    categories = Ad_Category.query.filter(
+        Ad_Category.category_area.any(Ad_Category_Area.id_area == id)).all()
+    categories_area = [category.short() for category in categories]
+    print(categories)
+    print(categories_area)
+    try:
         return jsonify({
             "success": True,
-            "message": "No fixed prices for area in the DB"
+            "groups": categories_area
         })
 
+    except:
+        abort(422)
+
+# #groups = App_Group.query.filter(
+#         App_Group.app_user.any(App_User.id == id)).all()
+#     user_groups = [group.short() for group in groups]
+
+
+@areas.route('/<int:id>/category/<int:group_id>', methods=['GET'])
+@requires_auth(permission='get:area')
+def show_category_for_area(payload, id, group_id):
+    single_area = Ad_Area.query.filter(Ad_Category_Area.id_area == id).first()
+    if not single_area:
+        abort(404)
+    single_category = Ad_Category.query.filter(
+        Ad_Category_Area.id_category == group_id).first()
+    if not single_category:
+        abort(404)
+
     try:
-        fixedPrices = [area.long()
-                       for area in all_fixed_Prices_for_area]
 
         return jsonify({
             "success": True,
             "area": single_area.short(),
-            "fixedPrices": fixedPrices
+            "category": single_category.long()
         })
     except:
         abort(422)
 
 
-# @areas.route('/<int:id>/fixedPrices/<int:id_fixedPrice>', methods=['GET'])
-# def get_single_fixedPrice_for_area(id, id_fixedPrice):
-#     single_fixed_price_for_area = Ad_Fixed_Price.query.filter(
-#         Ad_Fixed_Price.id == id_fixedPrice).filter(Ad_Fixed_Price.id_ad_area == id).first()
-#     if not single_fixed_price_for_area:
-#         abort(404)
+@areas.route('<int:id>/category/<int:group_id>', methods=['POST'])
+@requires_auth(permission='post:area')
+def add_category_for_are(payload, id, group_id):
+    req = request.get_json()
+    single_area = Ad_Area.query.filter(Ad_Area.id == id).first()
+    if not single_area:
+        abort(404)
+    single_category = Ad_Category.query.filter(
+        Ad_Category.id == group_id).first()
+    if not single_category:
+        abort(404)
 
-#     try:
-#         return jsonify({
-#             "success": True,
-#             "area": single_fixed_price_for_area.long()
-#         })
-#     except:
-#         abort(422)
+    try:
+        req_valid_from = req.get('valid_from')
+        if not req_valid_from:
+            req_valid_from = datetime.datetime.now()
+        req_valid_to = req.get('valid_to')
+        if not req_valid_to:
+            req_valid_to = '2120-05-24 13:27:05.332153'  # 100 YEARS
 
+        new_category_area = Ad_Category_Area(
+            id_category=group_id, id_area=id, valid_to=req_valid_to, valid_from=req_valid_from, activated=1)
 
-# @areas.route('/<int:id>/fixedPrices/<int:id_fixedPrice>', methods=['PATCH'])
-# def patch_fixed_price_for_area(id, id_fixedPrice):
-#     single_fixed_price_for_area = Ad_Fixed_Price.query.filter(
-#         Ad_Fixed_Price.id == id_fixedPrice).filter(Ad_Fixed_Price.id_ad_area == id).first()
-#     if not single_fixed_price_for_area:
-#         abort(404)
+        new_category_area.insert()
 
-#     req = request.get_json()
+        return jsonify({
+            "success": True,
+            "category_area": new_category_area.long()
+        })
+    except:
+        abort(422)
 
-#     try:
-#         if 'name' in req:
-#             single_fixed_price_for_area.name = req.get('name')
+    # @areas.route('/<int:id>/fixedPrices/<int:id_fixedPrice>', methods=['GET'])
+    # def get_single_fixedPrice_for_area(id, id_fixedPrice):
+    #     single_fixed_price_for_area = Ad_Fixed_Price.query.filter(
+    #         Ad_Fixed_Price.id == id_fixedPrice).filter(Ad_Fixed_Price.id_ad_area == id).first()
+    #     if not single_fixed_price_for_area:
+    #         abort(404)
 
-#         if 'dp_price' in req:
-#             single_fixed_price_for_area.dp_price = req.get('dp_price')
+    #     try:
+    #         return jsonify({
+    #             "success": True,
+    #             "area": single_fixed_price_for_area.long()
+    #         })
+    #     except:
+    #         abort(422)
 
-#         if 'gp_price' in req:
-#             single_fixed_price_for_area.gp_price = req.get('gp_price')
+    # @areas.route('/<int:id>/fixedPrices/<int:id_fixedPrice>', methods=['PATCH'])
+    # def patch_fixed_price_for_area(id, id_fixedPrice):
+    #     single_fixed_price_for_area = Ad_Fixed_Price.query.filter(
+    #         Ad_Fixed_Price.id == id_fixedPrice).filter(Ad_Fixed_Price.id_ad_area == id).first()
+    #     if not single_fixed_price_for_area:
+    #         abort(404)
 
-#         if 'notes' in req:
-#             single_fixed_price_for_area.notes = req.get('notes')
+    #     req = request.get_json()
 
-#         single_fixed_price_for_area.update()
+    #     try:
+    #         if 'name' in req:
+    #             single_fixed_price_for_area.name = req.get('name')
 
-#         return jsonify({
-#             "success": True,
-#             "Area": single_fixed_price_for_area.long()
-#         })
+    #         if 'dp_price' in req:
+    #             single_fixed_price_for_area.dp_price = req.get('dp_price')
 
-#     except:
-#         abort(422)
+    #         if 'gp_price' in req:
+    #             single_fixed_price_for_area.gp_price = req.get('gp_price')
 
+    #         if 'notes' in req:
+    #             single_fixed_price_for_area.notes = req.get('notes')
 
-# @areas.route('/<int:id>/fixedPrices', methods=['POST'])
-# def create_fixedPrice_for_area(id):
-#     single_area = Ad_Area.query.filter(Ad_Area.id == id).first()
-#     if not single_area:
-#         abort(404)
-#     req = request.get_json()
+    #         single_fixed_price_for_area.update()
 
-#     try:
-#         req_name = req.get('name')
-#         req_gp_price = req.get('gp_price')
-#         req_dp_price = req.get('dp_price')
-#         req_notes = req.get('notes')
+    #         return jsonify({
+    #             "success": True,
+    #             "Area": single_fixed_price_for_area.long()
+    #         })
 
-#         print(req_dp_price, " ", req_name)
+    #     except:
+    #         abort(422)
 
-#         new_fixedPrice = Ad_Fixed_Price(name=req_name, gp_price=req_gp_price, dp_price=req_dp_price, notes=req_notes,
-#                                         id_ad_area=id)
-#         new_fixedPrice.insert()
+    # @areas.route('/<int:id>/fixedPrices', methods=['POST'])
+    # def create_fixedPrice_for_area(id):
+    #     single_area = Ad_Area.query.filter(Ad_Area.id == id).first()
+    #     if not single_area:
+    #         abort(404)
+    #     req = request.get_json()
 
-#         return jsonify({
-#             "success": True,
-#             "area id": id,
-#             "fixedPrice": new_fixedPrice.short()
-#         })
-#     except:
-#         abort(422)
+    #     try:
+    #         req_name = req.get('name')
+    #         req_gp_price = req.get('gp_price')
+    #         req_dp_price = req.get('dp_price')
+    #         req_notes = req.get('notes')
 
+    #         print(req_dp_price, " ", req_name)
 
-# @areas.route('/<int:id>/fixedPrices/<int:id_fixedPrice>', methods=['DELETE'])
-# def delete_fixed_price_for_area(id, id_fixedPrice):
-#     single_fixed_price_for_area = Ad_Fixed_Price.query.filter(
-#         Ad_Fixed_Price.id == id_fixedPrice).filter(Ad_Fixed_Price.id_ad_area == id).first()
-#     if not single_fixed_price_for_area:
-#         abort(404)
+    #         new_fixedPrice = Ad_Fixed_Price(name=req_name, gp_price=req_gp_price, dp_price=req_dp_price, notes=req_notes,
+    #                                         id_ad_area=id)
+    #         new_fixedPrice.insert()
 
-#     try:
-#         delete_fixed_price = Ad_Fixed_Price.query.filter(
-#             Ad_Fixed_Price.id == id_fixedPrice).filter(Ad_Fixed_Price.id_ad_area == id).first()
-#         delete_fixed_price.delete()
+    #         return jsonify({
+    #             "success": True,
+    #             "area id": id,
+    #             "fixedPrice": new_fixedPrice.short()
+    #         })
+    #     except:
+    #         abort(422)
 
-#         return jsonify({
-#             "success": True,
-#             "deleted fixed Price": delete_fixed_price.id
-#         })
+    # @areas.route('/<int:id>/fixedPrices/<int:id_fixedPrice>', methods=['DELETE'])
+    # def delete_fixed_price_for_area(id, id_fixedPrice):
+    #     single_fixed_price_for_area = Ad_Fixed_Price.query.filter(
+    #         Ad_Fixed_Price.id == id_fixedPrice).filter(Ad_Fixed_Price.id_ad_area == id).first()
+    #     if not single_fixed_price_for_area:
+    #         abort(404)
 
-#     except:
-#         abort(422)
+    #     try:
+    #         delete_fixed_price = Ad_Fixed_Price.query.filter(
+    #             Ad_Fixed_Price.id == id_fixedPrice).filter(Ad_Fixed_Price.id_ad_area == id).first()
+    #         delete_fixed_price.delete()
+
+    #         return jsonify({
+    #             "success": True,
+    #             "deleted fixed Price": delete_fixed_price.id
+    #         })
+
+    #     except:
+    #         abort(422)
