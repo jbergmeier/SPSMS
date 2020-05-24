@@ -227,6 +227,7 @@ class Ad_Category(db.Model):
     column_max = Column(Integer, nullable=True)
     notes = Column(String, nullable=True)
     isFixedPrice = Column(Boolean, nullable=False, default=0)
+    active = Column(Boolean, nullable=False, default=0)
     category_area = db.relationship(
         'Ad_Category_Area', backref='ad_category', lazy=True)
 
