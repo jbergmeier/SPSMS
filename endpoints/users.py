@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, abort, jsonify, request
 from database.models import setup_db, App_User, App_Group, app_user_group, db
+from auth.auth import AuthError, requires_auth
 
 users = Blueprint("users", __name__)
 
@@ -10,8 +11,9 @@ user endpoints
 '''
 
 
-@users.route('/createUser', methods=['POST'])
-def create_user():
+@users.route('/', methods=['POST'])
+@requires_auth(permission='post:user')
+def create_user(payload):
     req = request.get_json()
     try:
         req_email = req.get('email')
@@ -30,18 +32,15 @@ def create_user():
 
         return jsonify({
             "success": True,
-            "App_User": {
-                "firstname": req_firstname,
-                "lastname": req_lastname,
-                "email": req_email
-            }
+            "App_User": new_user.short()
         })
     except:
         abort(422)
 
 
 @users.route('/', methods=['GET'])
-def get_users():
+@requires_auth(permission='get:user')
+def get_users(payload):
     all_users = App_User.query.all()
     if not all_users:
         return jsonify({
@@ -60,7 +59,8 @@ def get_users():
 
 
 @users.route('/<int:id>', methods=['GET'])
-def get_single_user(id):
+@requires_auth(permission='get:user')
+def get_single_user(payload, id):
     single_user = App_User.query.filter(App_User.id == id).all()
     if not single_user:
         abort(404)
@@ -75,7 +75,8 @@ def get_single_user(id):
 
 
 @users.route('/<int:id>', methods=['PATCH'])
-def patch_user(id):
+@requires_auth(permission='post:user')
+def patch_user(payload, id):
     single_user = App_User.query.filter(App_User.id == id).first()
     if not single_user:
         abort(404)
@@ -124,7 +125,8 @@ def patch_user(id):
 
 
 @users.route('/<int:id>', methods=['DELETE'])
-def delete_user(id):
+@requires_auth(permission='post:user')
+def delete_user(payload, id):
     single_user = App_User.query.filter(App_User.id == id).all()
     if not single_user:
         abort(404)
@@ -149,7 +151,8 @@ user group endpoints
 
 
 @users.route('/<int:id>/groups', methods=['GET'])
-def show_user_groups(id):
+@requires_auth(permission='get:group')
+def show_user_groups(payload, id):
     user = App_User.query.filter(App_User.id == id).first()
     if not user:
         abort(404)
@@ -167,18 +170,25 @@ def show_user_groups(id):
         abort(422)
 
 
-@users.route('/<int:id>/groups', methods=['POST'])
-def add_user_to_group(id):
-    req = request.get_json()
-    # get group ID and check if it exists in DB
-    req_group_id = req.get('id_group')
-    group = App_Group.query.filter(App_Group.id == req_group_id).first()
+@users.route('/<int:id>/groups/<int:group_id>', methods=['POST'])
+@requires_auth(permission='post:user')
+def add_user_to_group(payload, id, group_id):
+    group = App_Group.query.filter(App_Group.id == group_id).first()
     if not group:
         abort(404)
     # Get user and check if it exists
     user = App_User.query.filter(App_User.id == id).first()
     if not user:
         abort(404)
+    # user_group = App_Group.query.filter(
+    #     App_Group.app_user.any(App_User.id == id).filter(App_Group.app_user.any(App_Group.id == group_id))).all()
+
+    # if user_group:
+    #     return jsonify({
+    #         "success": False,
+    #         "message": "User is already member of this group"
+    #     })
+
     try:
         user.groups.append(group)
         db.session.commit()
@@ -192,5 +202,6 @@ def add_user_to_group(id):
 
 
 @users.route('/<int:id>/groups/<int:group_id>', methods=['DELETE'])
-def delete_user_group(id, group_id):
+@requires_auth(permission='post:group')
+def delete_user_group(payload, id, group_id):
     pass

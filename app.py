@@ -6,10 +6,16 @@ from flask_migrate import Migrate, MigrateCommand
 import logging
 import os
 import datetime
-from database.models import setup_db, App_User
-from auth.auth import AuthError
+from database.models import setup_db, App_User, db
+from auth.auth import AuthError, requires_auth
 from endpoints.users import users
 from endpoints.groups import groups
+from endpoints.categories import categories
+from endpoints.areas import areas
+from endpoints.prebookings import prebookings
+
+# db.drop_all()
+# db.create_all()
 
 
 def create_app(test_config=None):
@@ -17,6 +23,11 @@ def create_app(test_config=None):
     app = Flask(__name__)
     setup_db(app)
     CORS(app)
+
+    @app.route('/')
+    def default_route():
+        print(request.get_data())
+        return "<h1>Welcome to SPSMS Backend</h1>"
 
     '''
     ###################################################
@@ -31,6 +42,27 @@ def create_app(test_config=None):
     ###################################################
     '''
     app.register_blueprint(groups, url_prefix='/groups')
+
+    '''
+    ###################################################
+    category endpoints
+    ###################################################
+    '''
+    app.register_blueprint(categories, url_prefix='/categories')
+
+    '''
+    ###################################################
+    area endpoints + category_area
+    ###################################################
+    '''
+    app.register_blueprint(areas, url_prefix='/areas')
+
+    '''
+    ###################################################
+    prebooking
+    ###################################################
+    '''
+    app.register_blueprint(prebookings, url_prefix='/prebookings')
 
     '''
     ###################################################
