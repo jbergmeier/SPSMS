@@ -138,8 +138,7 @@ class Ad_Area(db.Model):
     gp_mm_price_text = Column(Float, nullable=True)
     dp_mm_price = Column(Float, nullable=True)
     dp_mm_price_text = Column(Float, nullable=True)
-    fixed_prices = db.relationship(
-        'Ad_Fixed_Price', backref='ad_area', lazy=True)
+    # fixed_prices = db.relationship('Ad_Fixed_Price', backref='ad_area', lazy=True)
     category_area = db.relationship(
         'Ad_Category_Area', backref='ad_area', lazy=True)
 
@@ -175,45 +174,45 @@ class Ad_Area(db.Model):
         return json.dumps(self.short())
 
 
-class Ad_Fixed_Price(db.Model):
-    __tablename__ = 'ad_fixed_price'
+# class Ad_Fixed_Price(db.Model):
+#     __tablename__ = 'ad_fixed_price'
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
-    gp_price = Column(Float, nullable=True)
-    dp_price = Column(Float, nullable=True)
-    notes = Column(String, nullable=True)
-    id_ad_area = Column(Integer, ForeignKey('ad_area.id'), nullable=False)
+#     id = Column(Integer, primary_key=True)
+#     name = Column(String, nullable=False)
+#     gp_price = Column(Float, nullable=True)
+#     dp_price = Column(Float, nullable=True)
+#     notes = Column(String, nullable=True)
+#     id_ad_area = Column(Integer, ForeignKey('ad_area.id'), nullable=False)
 
-    def insert(self):
-        db.session.add(self)
-        db.session.commit()
+#     def insert(self):
+#         db.session.add(self)
+#         db.session.commit()
 
-    def update(self):
-        db.session.commit()
+#     def update(self):
+#         db.session.commit()
 
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
+#     def delete(self):
+#         db.session.delete(self)
+#         db.session.commit()
 
-    def short(self):
-        return {
-            'id': self.id,
-            'name': self.name
-        }
+#     def short(self):
+#         return {
+#             'id': self.id,
+#             'name': self.name
+#         }
 
-    def long(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'gp_price': self.gp_price,
-            'dp_price': self.dp_price,
-            'notes': self.notes,
-            'id_ad_area': self.id_ad_area
-        }
+#     def long(self):
+#         return {
+#             'id': self.id,
+#             'name': self.name,
+#             'gp_price': self.gp_price,
+#             'dp_price': self.dp_price,
+#             'notes': self.notes,
+#             'id_ad_area': self.id_ad_area
+#         }
 
-    def __repr__(self):
-        return json.dumps(self.short())
+#     def __repr__(self):
+#         return json.dumps(self.short())
 
 
 class Ad_Category(db.Model):
@@ -227,6 +226,7 @@ class Ad_Category(db.Model):
     column_min = Column(Integer, nullable=True)
     column_max = Column(Integer, nullable=True)
     notes = Column(String, nullable=True)
+    isFixedPrice = Column(Boolean, nullable=False, default=0)
     category_area = db.relationship(
         'Ad_Category_Area', backref='ad_category', lazy=True)
 
@@ -244,6 +244,7 @@ class Ad_Category(db.Model):
     def short(self):
         return {
             'id': self.id,
+            'code': self.code,
             'name': self.name
         }
 
@@ -256,7 +257,7 @@ class Ad_Category(db.Model):
             'mm_max': self.mm_max,
             'column_min': self.column_min,
             'column_max': self.column_max,
-            "notes": self.notes
+            'notes': self.notes
         }
 
     def __repr__(self):

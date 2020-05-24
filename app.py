@@ -6,12 +6,15 @@ from flask_migrate import Migrate, MigrateCommand
 import logging
 import os
 import datetime
-from database.models import setup_db, App_User
+from database.models import setup_db, App_User, db
 from auth.auth import AuthError, requires_auth
 from endpoints.users import users
 from endpoints.groups import groups
 from endpoints.categories import categories
 from endpoints.areas import areas
+
+# db.drop_all()
+# db.create_all()
 
 
 def create_app(test_config=None):
