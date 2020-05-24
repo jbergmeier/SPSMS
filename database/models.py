@@ -305,3 +305,43 @@ class Ad_Category_Area(db.Model):
 
     def __repr__(self):
         return json.dumps(self.short())
+
+
+class PreBooking(db.Model):
+    __tablename__ = 'prebooking'
+
+    id = Column(Integer, primary_key=True)
+    ad_date = Column(DateTime, nullable=False, default=datetime.datetime.now())
+    id_customer = Column(Integer, ForeignKey('app_user.id'), nullable=False)
+    id_area_category = Column(Integer, ForeignKey(
+        'ad_category_area.id'), nullable=False)
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def short(self):
+        return {
+            'id': self.id,
+            'id_customer': self.id_customer,
+            'id_area_category': self.id_area_category,
+            'ad_date': self.ad_date
+        }
+
+    def long(self):
+        return {
+            'id': self.id,
+            'id_customer': self.id_customer,
+            'id_area_category': self.id_area_category,
+            'ad_date': self.ad_date
+        }
+
+    def __repr__(self):
+        return json.dumps(self.short())

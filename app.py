@@ -12,6 +12,7 @@ from endpoints.users import users
 from endpoints.groups import groups
 from endpoints.categories import categories
 from endpoints.areas import areas
+from endpoints.prebooking import prebooking
 
 # db.drop_all()
 # db.create_all()
@@ -51,10 +52,17 @@ def create_app(test_config=None):
 
     '''
     ###################################################
-    area endpoints incl. fixed prices
+    area endpoints + category_area
     ###################################################
     '''
     app.register_blueprint(areas, url_prefix='/areas')
+
+    '''
+    ###################################################
+    prebooking
+    ###################################################
+    '''
+    app.register_blueprint(prebooking, url_prefix='/prebooking')
 
     '''
     ###################################################
