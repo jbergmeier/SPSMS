@@ -298,12 +298,11 @@ def show_user_groups(payload, id):
     categories = Ad_Category.query.filter(
         Ad_Category.category_area.any(Ad_Category_Area.id_area == id)).all()
     categories_area = [category.short() for category in categories]
-    print(categories)
-    print(categories_area)
+
     try:
         return jsonify({
             "success": True,
-            "groups": categories_area
+            "categories": categories_area
         })
 
     except:
@@ -314,21 +313,25 @@ def show_user_groups(payload, id):
 #     user_groups = [group.short() for group in groups]
 
 
-@areas.route('/<int:id>/category/<int:group_id>', methods=['GET'])
+@areas.route('/<int:id>/categories/<int:category_id>', methods=['GET'])
 @requires_auth(permission='get:area')
-def show_category_for_area(payload, id, group_id):
+def show_category_for_area(payload, id, category_id):
     single_area = Ad_Area.query.filter(Ad_Category_Area.id_area == id).first()
     if not single_area:
         abort(404)
     single_category = Ad_Category.query.filter(
-        Ad_Category_Area.id_category == group_id).first()
+        Ad_Category_Area.id_category == category_id).first()
     if not single_category:
         abort(404)
+
+    category_area = Ad_Category_Area.query.filter(Ad_Category_Area.id_area == id).filter(
+        Ad_Category_Area.id_category == category_id).first()
 
     try:
 
         return jsonify({
             "success": True,
+            "categoryAreaDetails": category_area.long(),
             "area": single_area.short(),
             "category": single_category.long()
         })
@@ -336,15 +339,15 @@ def show_category_for_area(payload, id, group_id):
         abort(422)
 
 
-@areas.route('<int:id>/category/<int:group_id>', methods=['POST'])
+@areas.route('<int:id>/categories/<int:category_id>', methods=['POST'])
 @requires_auth(permission='post:area')
-def add_category_for_are(payload, id, group_id):
+def add_category_for_are(payload, id, category_id):
     req = request.get_json()
     single_area = Ad_Area.query.filter(Ad_Area.id == id).first()
     if not single_area:
         abort(404)
     single_category = Ad_Category.query.filter(
-        Ad_Category.id == group_id).first()
+        Ad_Category.id == category_id).first()
     if not single_category:
         abort(404)
 
@@ -357,7 +360,7 @@ def add_category_for_are(payload, id, group_id):
             req_valid_to = '2120-05-24 13:27:05.332153'  # 100 YEARS
 
         new_category_area = Ad_Category_Area(
-            id_category=group_id, id_area=id, valid_to=req_valid_to, valid_from=req_valid_from, activated=1)
+            id_category=category_id, id_area=id, valid_to=req_valid_to, valid_from=req_valid_from, activated=1)
 
         new_category_area.insert()
 

@@ -60,10 +60,10 @@ def get_prebookings(payload):
                 Ad_Category_Area, Ad_Category_Area.id_area == Ad_Area.id).filter(Ad_Category_Area.id == prebooking.id_area_category).all()
 
             for area in areas:
-                result_area.append(area.long())
+                result_area.append(area.short())
 
             for category in categories:
-                result_category.append(category.long())
+                result_category.append(category.short())
 
             result.append({"id": prebooking.id, "firstname": user.firstname, "company": user.company, "email": user.email,
                            "lastname": user.lastname, "bookingDate": prebooking.ad_date, "area": result_area, "category": result_category})
@@ -109,15 +109,19 @@ def get_single_prebooking(payload, id):
     except:
         abort(422)
 
-#  user = App_User.query.filter(App_User.id == id).first()
-#     if not user:
-#         abort(404)
 
-#     groups = App_Group.query.filter(
-#         App_Group.app_user.any(App_User.id == id)).all()
-#     user_groups = [group.short() for group in groups]
-#     try:
-#         return jsonify({
-#             "success": True,
-#             "groups": user_groups
-#         })
+@prebookings.route('/<int:id>', methods=['DELETE'])
+@requires_auth(permission='post:sales')
+def delete_single_preboking(payload, id):
+    prebooking = PreBooking.query.filter(PreBooking.id == id).first()
+    if not prebooking:
+        abort(404)
+
+    try:
+        prebooking.delete()
+        return jsonify({
+            "success": True,
+            "deleted_prebooking": prebooking.long()
+        })
+    except:
+        abort(422)
