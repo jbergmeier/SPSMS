@@ -138,7 +138,7 @@ def delete_category(payload, id):
 
         return jsonify({
             "success": True,
-            "deleted Category code": delete_category.code
+            "deleted Category": delete_category.short()
         })
 
     except:

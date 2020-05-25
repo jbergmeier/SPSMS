@@ -137,7 +137,7 @@ def delete_area(payload, id):
 
         return jsonify({
             "success": True,
-            "deleted Area code": delete_area.code
+            "deleted area": delete_area.short()
         })
 
     except:
@@ -367,6 +367,7 @@ def add_category_for_are(payload, id, group_id):
         })
     except:
         abort(422)
+    # LATER USE -- COMMENT OUT FOR NOW - JB
 
     # @areas.route('/<int:id>/fixedPrices/<int:id_fixedPrice>', methods=['GET'])
     # def get_single_fixedPrice_for_area(id, id_fixedPrice):

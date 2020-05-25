@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, abort, jsonify, request
 from database.models import setup_db, App_User, App_Group, app_user_group, db
 from auth.auth import AuthError, requires_auth
+import datetime
 
 users = Blueprint("users", __name__)
 
@@ -82,6 +83,7 @@ def patch_user(payload, id):
         abort(404)
 
     req = request.get_json()
+    print(req)
 
     try:
         if 'firstname' in req:
@@ -112,12 +114,9 @@ def patch_user(payload, id):
 
         single_user.update()
 
-        changed_user = [changed_user.long() for changed_user in App_User.query.filter(
-            App_User.id == id).all()]
-
         return jsonify({
             "success": True,
-            "User": changed_user
+            "user": single_user.long()
         })
 
     except:
@@ -136,7 +135,7 @@ def delete_user(payload, id):
 
         return jsonify({
             "success": True,
-            "deleted User id": delete_user.id
+            "deleted User": delete_user.long()
         })
 
     except:
