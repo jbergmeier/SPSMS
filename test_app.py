@@ -255,5 +255,6 @@ if __name__ == "__main__":
     - delete category
 
     +++ different other scenarios positive and negativ +++
+    +++ automate get Token with CURL etc??? +++
 
 '''
