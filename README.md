@@ -986,6 +986,11 @@ Short response of the deleted category.
 
 ```
 
+## Unit Test Setup
+To test the Endpoints with test_app.py you need to meet the following requirements.
+- Import ENV from setup.sh file (on MAC type: source ./setup.sh)
+- Import an install all requirements from requirements.txt
+- Get Bearer token for ADMIN and SALES and change it in the head of the test_app.py file to check rights properly. Login credentials you can get from README (see above)
 
-
+Start Testing with python test_app.py - All Test should be passed
 

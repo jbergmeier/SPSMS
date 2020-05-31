@@ -10,7 +10,8 @@ from database.models import setup_db, App_User, Ad_Category_Area, Ad_Area, Ad_Ca
 
 ''' Please change before test '''
 
-bearer_token = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImpLNExvWVllVmFSWFE0Zm9rUkZXZCJ9.eyJpc3MiOiJodHRwczovL3dlYmNvZmZlZS5ldS5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NWVjMmNlNDgzOGFhOWIwYmU3NWRmZjhlIiwiYXVkIjoiU1BTTVMtQVBJLURFViIsImlhdCI6MTU5MDQzNzQ2NywiZXhwIjoxNTkwNDQ0NjY3LCJhenAiOiIxNnpCVVhXVjNiTzlxZGxRalJpS0VndERSbTBLRmd5cCIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOlsiZ2V0OmFyZWEiLCJnZXQ6Y2F0ZWdvcnkiLCJnZXQ6Z3JvdXAiLCJnZXQ6c2FsZXMiLCJnZXQ6dXNlciIsInBvc3Q6YXJlYSIsInBvc3Q6Y2F0ZWdvcnkiLCJwb3N0Omdyb3VwIiwicG9zdDpzYWxlcyIsInBvc3Q6dXNlciJdfQ.WGpiDfybdez6O1xJifa2TqV3-hlZFTLBuYQxmjwbJ6fKpS5KOrtfKiDRQ2a3GNw3AWbQkhxXss84Sq5x7xI-zq5C8aWDE0Kjkc4fOTqIFWG6HmgtzP04isHzinVelcKR2WcoxOVTg89YLyg7jtXYBTZwUNkwAHLsJphwnMW_Of4wT54OZkn_CB-q4Jw_gbiYKZhSwZ5b9lB_TEgi0tD3RPpsXBrKd207FuvNkUzbXPWVvfpfwa6GynmV51nQ4cNoZQFeVnNEt9yr5_7RhFE6fg3Rv-dpVMqyC8YmMitl8xEgwUJMrJM-TyPX7W-rM8n7fVDvBFLqevOznaOpdIAc9A'
+bearer_token = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImpLNExvWVllVmFSWFE0Zm9rUkZXZCJ9.eyJpc3MiOiJodHRwczovL3dlYmNvZmZlZS5ldS5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NWVjMmNlNDgzOGFhOWIwYmU3NWRmZjhlIiwiYXVkIjoiU1BTTVMtQVBJLURFViIsImlhdCI6MTU5MDk1NDM0NywiZXhwIjoxNTkxMDQwNzQ3LCJhenAiOiIxNnpCVVhXVjNiTzlxZGxRalJpS0VndERSbTBLRmd5cCIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOlsiZ2V0OmFyZWEiLCJnZXQ6Y2F0ZWdvcnkiLCJnZXQ6Z3JvdXAiLCJnZXQ6c2FsZXMiLCJnZXQ6dXNlciIsInBvc3Q6YXJlYSIsInBvc3Q6Y2F0ZWdvcnkiLCJwb3N0Omdyb3VwIiwicG9zdDpzYWxlcyIsInBvc3Q6dXNlciJdfQ.CauGXcVvFhIt4bHmd-FPPtdyM6weCEnispquUPCE90yRS3ZDbukQZIksx_FmFiErWCs0bWkhSDz-s0uxf77EYoHymuTW-Zb2SVJpSzYmxElVlHsNgwPP29cnpPeD-LR9o3piC33KIst34Uf0R5pUkLHVC-2l1bKFx_U5gz1Jnf9qqpHtZ4PxD2Yaxy57zs4mR81DiGDOA2H5dqPhhcXhxPeyjxuBW2X17D-SNTaTcTwMFfAr-Jz8D3hxlk6C7DmIOJqhvnesF6WEt_v5GBXckrnnr8duPmIwT8AiTR-wop2OwkDKX2LwIvvoGJNbbDR0_Y0sV43fOaxMsP_NXxTVNg'
+bearer_token_sales = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImpLNExvWVllVmFSWFE0Zm9rUkZXZCJ9.eyJpc3MiOiJodHRwczovL3dlYmNvZmZlZS5ldS5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NWVjOGU4Yzc5YzVjYmUwYzFhYzM3ZjIwIiwiYXVkIjoiU1BTTVMtQVBJLURFViIsImlhdCI6MTU5MDk1NDY4MSwiZXhwIjoxNTkxMDQxMDgxLCJhenAiOiIxNnpCVVhXVjNiTzlxZGxRalJpS0VndERSbTBLRmd5cCIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOlsiZ2V0OmFyZWEiLCJnZXQ6Y2F0ZWdvcnkiLCJnZXQ6c2FsZXMiLCJwb3N0OnNhbGVzIl19.B9S6TWEVhScbcLqkdN1rIs_t2sYL8Wg5m_-pFaCk71WOhQTGD6Xp1HEYWt3kRTcq3ovHsAC5qfRCGEKB-oTo7wS6N53ourtj5p2rU4-P4U2LzRtR25EiwmfE0JZWXYI7wc4Cbc4Sp2_SNIpg_CHgI3aI24EMQotMzQ4aam8gjbUiPVDP3i_hXyDqD5NqqD1T3IhZKFN9x797BKs7THDEe-OAxyn7Yf69WtINTvTUfAXRDJHocGZSc1ya9l66qXlSJRRDILta5eszLo6C46yv23OCm0294fGrTIQJwZgRl2Szossyw8NJjE16uE3lVqHLbLcA-C0lemC6UT73n5UDEw'
 
 ''' DO NOT CHANGE THE KEYS BELOW'''
 bearer_token_wrong = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6I'
@@ -215,7 +216,7 @@ class SpsmsTestCases(unittest.TestCase):
     # ##################################
     # users
     # ##################################
-    def test_2e_get_areas_wrong_key(self):
+    def test_3a_get_users(self):
         print('##### Check GET users Endpoint #####')
         res = self.client().get('/users/',
                                 headers=[
@@ -225,36 +226,23 @@ class SpsmsTestCases(unittest.TestCase):
                                 ]
                                 )
         data = json.loads(res.data)
-        self.assertFalse(data['success'])
+        self.assertTrue(data['success'])
         self.assertEqual(res.status_code, 200)
+
+    def test_3b_missing_user_rights(self):
+        print('##### Check GET users Endpoint without permission #####')
+        res = self.client().get('/users/',
+                                headers=[
+                                    ('Content-Type', 'application/json'),
+                                    ('Authorization',
+                                     f'Bearer {bearer_token_sales}')
+                                ]
+                                )
+        data = json.loads(res.data)
+        self.assertFalse(data['success'])
+        self.assertEqual(res.status_code, 401)
 
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
     unittest.main()
-
-'''
-#Todo:
-- check access with bearer token which does not have access (403 error expected)
-- Add users, area_category?? and prebooking (Change order of exec:
-    - post area
-    - get area
-    - ...
-    - post category
-    - get category
-    - ...
-    - post area_category
-    - get area_category
-    - ...
-    - post prebooking
-    - get prebooking
-    - ...
-    - delete prebooking
-    - delete area_category
-    - delete area
-    - delete category
-
-    +++ different other scenarios positive and negativ +++
-    +++ automate get Token with CURL etc??? +++
-
-'''
