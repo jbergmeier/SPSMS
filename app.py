@@ -26,7 +26,6 @@ def create_app(test_config=None):
 
     @app.route('/')
     def default_route():
-        print(request.get_data())
         return "<h1>Welcome to SPSMS Backend</h1>"
 
     '''
